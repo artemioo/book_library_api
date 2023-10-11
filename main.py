@@ -10,8 +10,8 @@ from core.models.db_session import db_helper
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # создаю БД/таблицы (код до подключения алембика)
-    async with db_helper.engine.begin() as connection:
-        await connection.run_sync(Base.metadata.create_all)
+    # async with db_helper.engine.begin() as connection:
+    #     await connection.run_sync(Base.metadata.create_all)
     yield
 
 
