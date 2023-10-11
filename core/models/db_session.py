@@ -12,7 +12,7 @@ class DatabaseHelper:
             url=url,
             echo=echo,
         )
-        self.session_factory = async_sessionmaker(
+        self.session_factory = async_sessionmaker(  # default settings
             bind=self.engine,
             autoflush=False,  # подготовка к коммиту
             autocommit=False,
@@ -34,6 +34,6 @@ class DatabaseHelper:
 
 
 db_helper = DatabaseHelper(
-    url=settings.DB_URL,  # а тут уже мои значения
+    url=settings.DB_URL,  # а тут уже подставляем значения из settings
     echo=settings.DB_ECHO
 )
