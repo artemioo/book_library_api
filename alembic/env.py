@@ -20,8 +20,8 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from core.models import Base
-from core.config import settings
+from app.models import Base
+from app.core.config import settings
 target_metadata = Base.metadata
 config.set_main_option("sqlalchemy.url", settings.DB_URL)
 
