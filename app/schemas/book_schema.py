@@ -14,6 +14,13 @@ class BookCreateSchema(BaseBookSchema):
 class BookUpdateSchema(BaseBookSchema):
     pass
 
+
+class BookUpdatePartialSchema(BaseModel):
+    title: str | None = None
+    year: int | None = None
+    pages: int | None = None
+# TODO сделать валидатор для этих полей
+
 class BookSchema(BaseBookSchema):
     model_config = ConfigDict(from_attributes=True)
     id: int

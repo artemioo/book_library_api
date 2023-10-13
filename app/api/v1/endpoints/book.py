@@ -3,7 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud
 from app.db import db_helper
-from app.schemas.book_schema import BaseBookSchema, BookCreateSchema, BookSchema, BookUpdateSchema
+from app.deps.book_deps import book_by_id
+from app.schemas.book_schema import BaseBookSchema, BookCreateSchema, BookSchema, BookUpdateSchema, \
+    BookUpdatePartialSchema
 
 router = APIRouter(
     prefix='/books',
@@ -16,19 +18,36 @@ async def get_all_books(session: AsyncSession = Depends(db_helper.session_depend
     return await crud.get_books(session=session)
 
 
-@router.get('/{book_id}/', response_model=BaseBookSchema)
-async def get_books_by_id(book_id: int = Path(gt=0),
-                          session: AsyncSession = Depends(db_helper.session_dependency)
-    ) -> BaseBookSchema | None:
-    return await crud.get_book_by_id(session=session, book_id=book_id)
+@router.get('/{book_id}/', response_model=BookSchema)
+async def get_book(book: BookSchema = Depends(book_by_id)):
+    return book
 
 
-@router.patch('/book_id/', response_model=BookSchema)
+@router.patch('/book_id/')
+async def update_book_partial(
+        book_update: BookUpdatePartialSchema,
+        book: BookSchema = Depends(book_by_id),
+        session: AsyncSession = Depends(db_helper.session_dependency)):
+    return await crud.update_book(
+        session=session,
+        book=book,
+        book_update=book_update,
+        partial=True)
+
+@router.put('/book_id/')
 async def update_book(
         book_update: BookUpdateSchema,
-        book: BookSchema = Depends(get_books_by_id),
+        book: BookSchema = Depends(book_by_id),
         session: AsyncSession = Depends(db_helper.session_dependency)):
-    return await crud.update_book(session=session, book_update=book_update, book=book, partially=False)
+    return await crud.update_book(
+        session=session,
+        book=book,
+        book_update=book_update,
+        partial=False)
+
+
+
+
 
 @router.post('/create/', response_model=BookSchema)
 async def create_book(
