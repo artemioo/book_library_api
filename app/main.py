@@ -1,13 +1,10 @@
 from contextlib import asynccontextmanager
-
-
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 import uvicorn
-from sqlalchemy.ext.asyncio import AsyncSession
-from app import crud
 
-from app.db import db_helper
-from app.schemas.book_schema import BookSchema
+from app.api.v1.api import api_router
+
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -18,7 +15,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-
+app.include_router(api_router)
 
 
 @app.get('/')
@@ -27,9 +24,6 @@ def home():
 
 
 # TODO: убрать это в api + router
-@app.get('/books/', response_model=list[BookSchema])
-async def get_all_books(session: AsyncSession = Depends(db_helper.session_dependency)) -> list[BookSchema]:
-    return await crud.get_books(session=session)
 
 
 
